@@ -1,0 +1,58 @@
+name: Daily Tefilah PDF
+
+on:
+  schedule:
+    # 04:00 UTC = 06:00 שעון ישראל חורף (IST = UTC+2)
+    # בקיץ (IDT = UTC+3) זה יהיה 07:00 — אפשר לשנות ל-"0 3 * * *" אם רוצים 06:00 מדויק
+    - cron: '0 4 * * *'
+  workflow_dispatch:  # הפעלה ידנית לבדיקה
+
+jobs:
+  generate-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ hashFiles('requirements.txt') }}
+
+      - name: Cache fonts
+        uses: actions/cache@v4
+        with:
+          path: fonts/
+          key: tefilah-fonts-v1
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate PDF
+        run: python tefilah_newsletter.py
+
+      - name: Commit and push PDF
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # מוסיף רק קבצי PDF — לא credentials ולא שאר קבצים
+          git add tefilah_*.pdf
+
+          # מבצע commit רק אם יש שינוי
+          if git diff --staged --quiet; then
+            echo "אין PDF חדש — דילוג על commit"
+          else
+            DATE=$(date +'%d-%m-%Y')
+            git commit -m "📄 tefilah ${DATE}"
+            git push
+          fi

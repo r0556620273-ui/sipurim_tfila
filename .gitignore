@@ -1,0 +1,19 @@
+# אישורים ומפתחות — לעולם לא מועלים לGitHub
+credentials.json
+tefilah_token.json
+*.json
+
+# פונטים — מורידים אוטומטית בהרצה
+fonts/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.env
+
+# מערכת
+.DS_Store
+Thumbs.db

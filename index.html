@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>מילים קצרות על מילים גדולות</title>
+  <link href="https://fonts.googleapis.com/css2?family=Alef:wght@400;700&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal-dark:   #005F65;
+      --teal-main:   #007F8A;
+      --teal-light:  #4CBFBF;
+      --teal-pale:   #E4F7F7;
+      --gold:        #C9A227;
+      --gold-light:  #F0D878;
+      --gold-pale:   #FDF8E7;
+      --text-dark:   #1A2E2E;
+      --text-mid:    #4A6A6A;
+      --white:       #FFFFFF;
+    }
+
+    body {
+      font-family: 'Heebo', sans-serif;
+      background: var(--teal-pale);
+      color: var(--text-dark);
+      min-height: 100vh;
+    }
+
+    /* ─── HEADER ─────────────────────────────────────────────── */
+    header {
+      background: linear-gradient(150deg, var(--teal-dark) 0%, var(--teal-main) 100%);
+      padding: 3.5rem 2rem 2.8rem;
+      text-align: center;
+      border-bottom: 4px solid var(--gold);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* תבנית רקע עדינה */
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        -45deg,
+        transparent 0px,
+        transparent 22px,
+        rgba(255,255,255,0.04) 22px,
+        rgba(255,255,255,0.04) 44px
+      );
+      pointer-events: none;
+    }
+
+    header h1 {
+      font-family: 'Alef', serif;
+      font-weight: 700;
+      font-size: clamp(1.9rem, 5.5vw, 3.2rem);
+      color: var(--gold-light);
+      letter-spacing: 0.04em;
+      position: relative;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+
+    header .header-line {
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 1rem auto 0.8rem;
+      border-radius: 2px;
+      position: relative;
+    }
+
+    header .subtitle {
+      font-family: 'Heebo', sans-serif;
+      font-weight: 300;
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.65);
+      letter-spacing: 0.06em;
+      position: relative;
+    }
+
+    /* ─── MAIN ───────────────────────────────────────────────── */
+    main {
+      max-width: 1020px;
+      margin: 2.5rem auto;
+      padding: 0 1.5rem 3rem;
+    }
+
+    /* ─── CARDS GRID ─────────────────────────────────────────── */
+    #cards-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      text-decoration: none;
+      color: inherit;
+      background: var(--white);
+      border-radius: 14px;
+      padding: 1.6rem 1.2rem 1.3rem;
+      border: 2px solid transparent;
+      box-shadow:
+        0 2px 6px rgba(0, 95, 101, 0.08),
+        0 1px 2px rgba(0, 0, 0, 0.04);
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow:
+        0 8px 24px rgba(0, 95, 101, 0.16),
+        0 2px 6px rgba(201, 162, 39, 0.12);
+      border-color: var(--gold);
+    }
+
+    .card-label {
+      font-family: 'Heebo', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 500;
+      color: var(--teal-light);
+      letter-spacing: 0.1em;
+      background: var(--teal-pale);
+      padding: 0.22rem 0.7rem;
+      border-radius: 20px;
+      margin-bottom: 0.9rem;
+    }
+
+    .card-hebrew {
+      font-family: 'Alef', serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--teal-dark);
+      line-height: 1.45;
+      margin-bottom: 0.55rem;
+      min-height: 2.2em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-gregorian {
+      font-family: 'Heebo', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 300;
+      color: var(--text-mid);
+      direction: ltr;
+      unicode-bidi: bidi-override;
+      letter-spacing: 0.03em;
+    }
+
+    .card-divider {
+      width: 30px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--teal-light), var(--gold));
+      border-radius: 1px;
+      margin: 0.85rem auto 0;
+      opacity: 0.6;
+      transition: opacity 0.2s, width 0.2s;
+    }
+
+    .card:hover .card-divider {
+      opacity: 1;
+      width: 50px;
+    }
+
+    /* ─── STATUS (loading / error) ───────────────────────────── */
+    #status {
+      text-align: center;
+      padding: 4rem 0;
+      font-family: 'Heebo', sans-serif;
+      font-size: 1.05rem;
+      color: var(--teal-main);
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 36px;
+      height: 36px;
+      border: 3px solid var(--teal-pale);
+      border-top-color: var(--teal-main);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+      margin-bottom: 1rem;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-msg {
+      color: #9b2335;
+      background: #fde8eb;
+      border: 1px solid #f5b8c0;
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      display: inline-block;
+      font-size: 0.95rem;
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 1.5rem 2rem;
+      font-family: 'Heebo', sans-serif;
+      font-size: 0.8rem;
+      color: var(--teal-main);
+      border-top: 1px solid rgba(0, 127, 138, 0.18);
+      background: rgba(228, 247, 247, 0.6);
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────── */
+    @media (max-width: 480px) {
+      #cards-container {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 1rem;
+      }
+      header { padding: 2.5rem 1.5rem 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>מילים קצרות על מילים גדולות</h1>
+  <div class="header-line"></div>
+  <p class="subtitle">ניוזלטר תפילה יומי</p>
+</header>
+
+<main>
+  <div id="status">
+    <div class="spinner"></div>
+    <p>טוען רשימת ניוזלטרים…</p>
+  </div>
+  <div id="cards-container"></div>
+</main>
+
+<footer>
+  כל המקורות מספרי קודש בלבד
+</footer>
+
+<script>
+  /* ── הגדרות ─────────────────────────────────────────────────── */
+  const CONFIG = {
+    githubUser: 'YOUR_GITHUB_USERNAME', // ← שנה לשם המשתמש שלך
+    githubRepo: 'sipurim_tfila',
+  };
+
+  const PDF_RE = /^tefilah_(\d{2})-(\d{2})-(\d{4})\.pdf$/;
+
+  /* ── המרת תאריך עברי ────────────────────────────────────────── */
+  const hebrewDateCache = {};
+
+  async function getHebrewDate(day, month, year) {
+    const key = `${year}-${month}-${day}`;
+    if (hebrewDateCache[key]) return hebrewDateCache[key];
+
+    try {
+      const url =
+        `https://www.hebcal.com/converter` +
+        `?cfg=json&gy=${year}&gm=${month}&gd=${day}&g2h=1`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('hebcal error');
+      const data = await res.json();
+      const result = data.hebrew || null;
+      hebrewDateCache[key] = result;
+      return result;
+    } catch {
+      return null;
+    }
+  }
+
+  /* ── עזרים ──────────────────────────────────────────────────── */
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function formatGregorian(day, month, year) {
+    return `${pad(day)}/${pad(month)}/${year}`;
+  }
+
+  function setStatus(html) {
+    document.getElementById('status').innerHTML = html;
+  }
+
+  /* ── טעינה ראשית ────────────────────────────────────────────── */
+  async function loadPDFs() {
+    try {
+      /* שלב 1: רשימת קבצים מ-GitHub */
+      const apiUrl =
+        `https://api.github.com/repos/${CONFIG.githubUser}/${CONFIG.githubRepo}/contents/`;
+      const res = await fetch(apiUrl, {
+        headers: { Accept: 'application/vnd.github+json' },
+      });
+      if (!res.ok) {
+        throw new Error(
+          `שגיאה מ-GitHub API (${res.status}). ` +
+          `ודא שה-repo קיים ושהשם ב-CONFIG נכון.`
+        );
+      }
+      const files = await res.json();
+
+      /* שלב 2: סינון קבצי PDF וחילוץ תאריכים */
+      const pdfs = files
+        .filter(f => f.type === 'file' && PDF_RE.test(f.name))
+        .map(f => {
+          const [, dd, mm, yyyy] = PDF_RE.exec(f.name);
+          return { name: f.name, day: +dd, month: +mm, year: +yyyy };
+        })
+        .sort((a, b) => {
+          // חדש ביותר ראשון
+          const da = new Date(a.year, a.month - 1, a.day);
+          const db = new Date(b.year, b.month - 1, b.day);
+          return db - da;
+        });
+
+      if (pdfs.length === 0) {
+        setStatus('<p>לא נמצאו קבצי PDF בריפו.</p>');
+        return;
+      }
+
+      /* שלב 3: המרת כל התאריכים לעברית במקביל */
+      const hebrewDates = await Promise.all(
+        pdfs.map(p => getHebrewDate(p.day, p.month, p.year))
+      );
+
+      /* שלב 4: בניית כרטיסים */
+      setStatus('');
+      const container = document.getElementById('cards-container');
+
+      pdfs.forEach((pdf, i) => {
+        const hebrew    = hebrewDates[i] || formatGregorian(pdf.day, pdf.month, pdf.year);
+        const gregorian = formatGregorian(pdf.day, pdf.month, pdf.year);
+
+        const card = document.createElement('a');
+        card.href      = `./${pdf.name}`;
+        card.target    = '_blank';
+        card.rel       = 'noopener noreferrer';
+        card.className = 'card';
+        card.setAttribute('aria-label', `${hebrew} – פתח PDF`);
+
+        card.innerHTML = `
+          <span class="card-label">מילה ליום</span>
+          <span class="card-hebrew">${hebrew}</span>
+          <span class="card-gregorian">${gregorian}</span>
+          <span class="card-divider"></span>
+        `;
+        container.appendChild(card);
+      });
+
+    } catch (err) {
+      setStatus(`<span class="error-msg">${err.message}</span>`);
+      console.error(err);
+    }
+  }
+
+  loadPDFs();
+</script>
+
+</body>
+</html>
